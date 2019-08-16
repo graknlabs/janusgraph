@@ -81,12 +81,11 @@ public abstract class JanusGraphBaseTest {
         getBackend(config).clearStorage();
     }
 
-    public static Backend getBackend(WriteConfiguration config) throws BackendException {
+    public static Backend getBackend(WriteConfiguration config) {
         ModifiableConfiguration adjustedConfig = new ModifiableConfiguration(GraphDatabaseConfiguration.ROOT_NS,config.copy(), BasicConfiguration.Restriction.NONE);
         adjustedConfig.set(GraphDatabaseConfiguration.LOCK_LOCAL_MEDIATOR_GROUP, "tmp");
         adjustedConfig.set(GraphDatabaseConfiguration.UNIQUE_INSTANCE_ID, "inst");
-        Backend backend = new Backend(adjustedConfig);
-        return backend;
+        return new Backend(adjustedConfig);
     }
 
     @BeforeEach
@@ -102,7 +101,7 @@ public abstract class JanusGraphBaseTest {
     }
 
     public void open(WriteConfiguration config) {
-        graph = (StandardJanusGraph) JanusGraphFactory.open(config);
+        graph = JanusGraphFactory.open(config);
         features = graph.getConfiguration().getStoreFeatures();
         tx = graph.newTransaction();
         mgmt = graph.openManagement();

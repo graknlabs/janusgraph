@@ -1190,8 +1190,8 @@ public class GraphDatabaseConfiguration {
 
     private final Configuration configuration;
     private final ReadConfiguration configurationAtOpen;
-    private String uniqueGraphId;
-    private final ModifiableConfiguration localConfiguration;
+    private final String uniqueGraphId;
+    private final StoreFeatures storeFeatures;
 
     private boolean readOnly;
     private boolean flushIDs;
@@ -1210,14 +1210,12 @@ public class GraphDatabaseConfiguration {
     private String metricsPrefix;
     private String unknownIndexKeyName;
 
-    private StoreFeatures storeFeatures = null;
 
-    public GraphDatabaseConfiguration(ReadConfiguration configurationAtOpen, ModifiableConfiguration localConfiguration,
-                                      String uniqueGraphId, Configuration configuration) {
+    public GraphDatabaseConfiguration(ReadConfiguration configurationAtOpen, String uniqueGraphId, Configuration configuration, StoreFeatures storeFeatures) {
         this.configurationAtOpen = configurationAtOpen;
-        this.localConfiguration = localConfiguration;
         this.uniqueGraphId = uniqueGraphId;
         this.configuration = configuration;
+        this.storeFeatures = storeFeatures;
         preLoadConfiguration();
     }
 
@@ -1332,18 +1330,11 @@ public class GraphDatabaseConfiguration {
         return configuration;
     }
 
-    public Backend getBackend() {
-        Backend backend = new Backend(configuration);
-        storeFeatures = backend.getStoreFeatures();
-        return backend;
-    }
-
     public String getGraphName() {
         return getConfigurationAtOpen().getString(GRAPH_NAME.toStringWithoutRoot());
     }
 
     public StoreFeatures getStoreFeatures() {
-        Preconditions.checkArgument(storeFeatures != null, "Cannot retrieve store features before the storage backend has been initialized");
         return storeFeatures;
     }
 
@@ -1366,12 +1357,6 @@ public class GraphDatabaseConfiguration {
     public SchemaCache getTypeCache(SchemaCache.StoreRetrieval retriever) {
         if (configuration.get(BASIC_METRICS)) return new MetricInstrumentedSchemaCache(retriever);
         else return new StandardSchemaCache(retriever);
-    }
-
-    public org.apache.commons.configuration.Configuration getLocalConfiguration() {
-        org.apache.commons.configuration.Configuration config = ((CommonsConfiguration)localConfiguration.getConfiguration()).getCommonConfiguration();
-        config.setProperty(Graph.GRAPH, JanusGraphFactory.class.getName());
-        return config;
     }
 
     public org.apache.commons.configuration.Configuration getConfigurationAtOpen() {

@@ -158,7 +158,7 @@ public class StandardJanusGraph extends JanusGraphBlueprintsGraph {
 
     private final String name;
 
-    public StandardJanusGraph(GraphDatabaseConfiguration configuration) {
+    public StandardJanusGraph(GraphDatabaseConfiguration configuration, Backend backend) {
 
         this.config = configuration;
         this.name = configuration.getGraphName();
@@ -167,7 +167,7 @@ public class StandardJanusGraph extends JanusGraphBlueprintsGraph {
         this.openTransactions = Collections.newSetFromMap(new ConcurrentHashMap<>(100, 0.75f, 1));
 
         // Collaborators:
-        this.backend = configuration.getBackend();
+        this.backend = backend;
         this.idAssigner = config.getIDAssigner(backend);
         this.idManager = idAssigner.getIDManager();
         this.times = configuration.getTimestampProvider();

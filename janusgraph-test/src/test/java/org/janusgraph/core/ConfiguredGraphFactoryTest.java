@@ -14,24 +14,26 @@
 
 package org.janusgraph.core;
 
-import org.janusgraph.graphdb.configuration.builder.GraphDatabaseConfigurationBuilder;
-import org.janusgraph.graphdb.management.JanusGraphManager;
-import org.janusgraph.graphdb.management.ConfigurationManagementGraph;
-import org.janusgraph.graphdb.management.utils.ConfigurationManagementGraphNotEnabledException;
-import org.janusgraph.diskstorage.configuration.backend.CommonsConfiguration;
+import org.apache.commons.configuration.MapConfiguration;
+import org.apache.tinkerpop.gremlin.server.Settings;
 import org.janusgraph.graphdb.database.StandardJanusGraph;
+import org.janusgraph.graphdb.management.ConfigurationManagementGraph;
+import org.janusgraph.graphdb.management.JanusGraphManager;
+import org.janusgraph.graphdb.management.utils.ConfigurationManagementGraphNotEnabledException;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import static org.janusgraph.graphdb.configuration.GraphDatabaseConfiguration.GRAPH_NAME;
 import static org.janusgraph.graphdb.configuration.GraphDatabaseConfiguration.STORAGE_BACKEND;
-
-import org.apache.tinkerpop.gremlin.server.Settings;
-import org.apache.commons.configuration.MapConfiguration;
-
-import java.util.Map;
-import java.util.HashMap;
-
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.AfterEach;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ConfiguredGraphFactoryTest {
     private static final JanusGraphManager gm;
@@ -40,7 +42,7 @@ public class ConfiguredGraphFactoryTest {
         final Map<String, Object> map = new HashMap<>();
         map.put(STORAGE_BACKEND.toStringWithoutRoot(), "inmemory");
         final MapConfiguration config = new MapConfiguration(map);
-        final StandardJanusGraph graph = new StandardJanusGraph(new GraphDatabaseConfigurationBuilder().build(new CommonsConfiguration(config)));
+        final StandardJanusGraph graph = JanusGraphFactory.open(config);
         // Instantiate the ConfigurationManagementGraph Singleton
         new ConfigurationManagementGraph(graph);
     }

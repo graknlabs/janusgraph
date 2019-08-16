@@ -14,22 +14,22 @@
 
 package org.janusgraph.graphdb.management;
 
-import org.janusgraph.diskstorage.configuration.backend.CommonsConfiguration;
-import org.janusgraph.graphdb.configuration.builder.GraphDatabaseConfigurationBuilder;
-import org.janusgraph.graphdb.database.StandardJanusGraph;
-import org.janusgraph.graphdb.database.management.ManagementSystem;
-import static org.janusgraph.graphdb.configuration.GraphDatabaseConfiguration.GRAPH_NAME;
-import static org.janusgraph.graphdb.configuration.GraphDatabaseConfiguration.STORAGE_BACKEND;
-
 import org.apache.commons.configuration.MapConfiguration;
 import org.apache.tinkerpop.gremlin.server.Settings;
+import org.janusgraph.core.JanusGraphFactory;
+import org.janusgraph.graphdb.database.StandardJanusGraph;
+import org.janusgraph.graphdb.database.management.ManagementSystem;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.janusgraph.graphdb.configuration.GraphDatabaseConfiguration.GRAPH_NAME;
+import static org.janusgraph.graphdb.configuration.GraphDatabaseConfiguration.STORAGE_BACKEND;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class ManagementLoggerGraphCacheEvictionTest {
 
@@ -43,7 +43,7 @@ public class ManagementLoggerGraphCacheEvictionTest {
         final Map<String, Object> map = new HashMap<>();
         map.put(STORAGE_BACKEND.toStringWithoutRoot(), "inmemory");
         final MapConfiguration config = new MapConfiguration(map);
-        final StandardJanusGraph graph = new StandardJanusGraph(new GraphDatabaseConfigurationBuilder().build(new CommonsConfiguration(config)));
+        final StandardJanusGraph graph = JanusGraphFactory.open(config);
         final ManagementSystem mgmt = (ManagementSystem) graph.openManagement();
         mgmt.evictGraphFromCache();
         mgmt.commit();
@@ -62,7 +62,7 @@ public class ManagementLoggerGraphCacheEvictionTest {
         map.put(STORAGE_BACKEND.toStringWithoutRoot(), "inmemory");
         map.put(GRAPH_NAME.toStringWithoutRoot(), "graph1");
         final MapConfiguration config = new MapConfiguration(map);
-        final StandardJanusGraph graph = new StandardJanusGraph(new GraphDatabaseConfigurationBuilder().build(new CommonsConfiguration(config)));
+        final StandardJanusGraph graph = JanusGraphFactory.open(config);
         jgm.putGraph("graph1", graph);
         assertEquals("graph1", ((StandardJanusGraph) JanusGraphManager.getInstance().getGraph("graph1")).getGraphName());
 

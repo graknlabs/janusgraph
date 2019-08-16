@@ -1,5 +1,3 @@
-Please replace every line in curly brackets ( { like this } ) with an appropriate description, and remove this line.
-
 ## What is the goal of this PR?
 
 { In the form of a paragraph (only use bullet points if strictly necessary), please describe the goal of this PR, why they are valuable to achieve, and reference the related GitHub issues. This section will be automatically compiled into the release notes, so please:

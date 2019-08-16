@@ -48,7 +48,7 @@ public class ConfigurationManagementGraphTest {
         final Map<String, Object> map = new HashMap<>();
         map.put(STORAGE_BACKEND.toStringWithoutRoot(), "inmemory");
         final MapConfiguration config = new MapConfiguration(map);
-        final StandardJanusGraph graph = new StandardJanusGraph(new GraphDatabaseConfigurationBuilder().build(new CommonsConfiguration(config)));
+        final StandardJanusGraph graph = JanusGraphFactory.open(config);
 
         final String propertyKeyName = "Created_Using_Template";
         final Class dataType = Boolean.class;

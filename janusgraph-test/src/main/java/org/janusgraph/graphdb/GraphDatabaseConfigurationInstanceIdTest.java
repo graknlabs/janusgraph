@@ -14,23 +14,24 @@
 
 package org.janusgraph.graphdb;
 
-import java.net.Inet4Address;
-import java.net.UnknownHostException;
-import java.util.Map;
-import java.util.HashMap;
 import org.apache.commons.configuration.MapConfiguration;
 import org.janusgraph.core.JanusGraphException;
-import org.janusgraph.diskstorage.configuration.backend.CommonsConfiguration;
-import org.janusgraph.graphdb.configuration.builder.GraphDatabaseConfigurationBuilder;
+import org.janusgraph.core.JanusGraphFactory;
 import org.janusgraph.graphdb.database.StandardJanusGraph;
 import org.junit.jupiter.api.Test;
+
+import java.net.Inet4Address;
+import java.net.UnknownHostException;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.janusgraph.graphdb.configuration.GraphDatabaseConfiguration.REPLACE_INSTANCE_IF_EXISTS;
 import static org.janusgraph.graphdb.configuration.GraphDatabaseConfiguration.STORAGE_BACKEND;
 import static org.janusgraph.graphdb.configuration.GraphDatabaseConfiguration.UNIQUE_INSTANCE_ID;
 import static org.janusgraph.graphdb.configuration.GraphDatabaseConfiguration.UNIQUE_INSTANCE_ID_HOSTNAME;
 import static org.janusgraph.graphdb.configuration.GraphDatabaseConfiguration.UNIQUE_INSTANCE_ID_SUFFIX;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class GraphDatabaseConfigurationInstanceIdTest {
 
@@ -41,17 +42,17 @@ public class GraphDatabaseConfigurationInstanceIdTest {
         map.put(UNIQUE_INSTANCE_ID.toStringWithoutRoot(), "not-unique");
         map.put(REPLACE_INSTANCE_IF_EXISTS.toStringWithoutRoot(), true);
         final MapConfiguration config = new MapConfiguration(map);
-        final StandardJanusGraph graph1 = new StandardJanusGraph(new GraphDatabaseConfigurationBuilder().build(new CommonsConfiguration(config)));
+        final StandardJanusGraph graph1 = JanusGraphFactory.open(config);
 
-        assertEquals(graph1.openManagement().getOpenInstances().size(), 1);
-        assertEquals(graph1.openManagement().getOpenInstances().toArray()[0], "not-unique");
+        assertEquals(1, graph1.openManagement().getOpenInstances().size());
+        assertEquals("not-unique", graph1.openManagement().getOpenInstances().toArray()[0]);
 
-        final StandardJanusGraph graph2 = new StandardJanusGraph(new GraphDatabaseConfigurationBuilder().build(new CommonsConfiguration(config)));
+        final StandardJanusGraph graph2 = JanusGraphFactory.open(config);
 
-        assertEquals(graph1.openManagement().getOpenInstances().size(), 1);
-        assertEquals(graph1.openManagement().getOpenInstances().toArray()[0], "not-unique");
-        assertEquals(graph2.openManagement().getOpenInstances().size(), 1);
-        assertEquals(graph2.openManagement().getOpenInstances().toArray()[0], "not-unique");
+        assertEquals(1, graph1.openManagement().getOpenInstances().size());
+        assertEquals("not-unique", graph1.openManagement().getOpenInstances().toArray()[0]);
+        assertEquals(1, graph2.openManagement().getOpenInstances().size());
+        assertEquals("not-unique", graph2.openManagement().getOpenInstances().toArray()[0]);
         graph1.close();
         graph2.close();
     }
@@ -62,12 +63,12 @@ public class GraphDatabaseConfigurationInstanceIdTest {
         map.put(STORAGE_BACKEND.toStringWithoutRoot(), "inmemory");
         map.put(UNIQUE_INSTANCE_ID.toStringWithoutRoot(), "not-unique");
         final MapConfiguration config = new MapConfiguration(map);
-        final StandardJanusGraph graph1 = new StandardJanusGraph(new GraphDatabaseConfigurationBuilder().build(new CommonsConfiguration(config)));
+        final StandardJanusGraph graph1 = JanusGraphFactory.open(config);
 
-        assertEquals(graph1.openManagement().getOpenInstances().size(), 1);
-        assertEquals(graph1.openManagement().getOpenInstances().toArray()[0], "not-unique");
+        assertEquals(1, graph1.openManagement().getOpenInstances().size());
+        assertEquals("not-unique", graph1.openManagement().getOpenInstances().toArray()[0]);
         JanusGraphException janusGraphException = assertThrows(JanusGraphException.class, () -> {
-            final StandardJanusGraph graph2 = new StandardJanusGraph(new GraphDatabaseConfigurationBuilder().build(new CommonsConfiguration(config)));
+            final StandardJanusGraph graph2 = JanusGraphFactory.open(config);
             graph1.close();
         });
         assertEquals("A JanusGraph graph with the same instance id [not-unique] is already open. Might required forced shutdown.", janusGraphException.getMessage());
@@ -79,9 +80,9 @@ public class GraphDatabaseConfigurationInstanceIdTest {
         map.put(STORAGE_BACKEND.toStringWithoutRoot(), "inmemory");
         map.put(UNIQUE_INSTANCE_ID_HOSTNAME.toStringWithoutRoot(), true);
         final MapConfiguration config = new MapConfiguration(map);
-        final StandardJanusGraph graph = new StandardJanusGraph(new GraphDatabaseConfigurationBuilder().build(new CommonsConfiguration(config)));
-        assertEquals(graph.openManagement().getOpenInstances().size(), 1);
-        assertEquals(graph.openManagement().getOpenInstances().toArray()[0], Inet4Address.getLocalHost().getHostName());
+        final StandardJanusGraph graph = JanusGraphFactory.open(config);
+        assertEquals(1, graph.openManagement().getOpenInstances().size());
+        assertEquals(Inet4Address.getLocalHost().getHostName(), graph.openManagement().getOpenInstances().toArray()[0]);
 				graph.close();
     }
 
@@ -92,9 +93,9 @@ public class GraphDatabaseConfigurationInstanceIdTest {
         map.put(UNIQUE_INSTANCE_ID_HOSTNAME.toStringWithoutRoot(), true);
         map.put(UNIQUE_INSTANCE_ID_SUFFIX.toStringWithoutRoot(), 1);
 				final MapConfiguration config = new MapConfiguration(map);
-        final StandardJanusGraph graph = new StandardJanusGraph(new GraphDatabaseConfigurationBuilder().build(new CommonsConfiguration(config)));
-        assertEquals(graph.openManagement().getOpenInstances().size(), 1);
-        assertEquals(graph.openManagement().getOpenInstances().toArray()[0], Inet4Address.getLocalHost().getHostName() + "1");
+        final StandardJanusGraph graph = JanusGraphFactory.open(config);
+        assertEquals(1, graph.openManagement().getOpenInstances().size(), 1);
+        assertEquals(Inet4Address.getLocalHost().getHostName() + "1", graph.openManagement().getOpenInstances().toArray()[0]);
 				graph.close();
     }
 }
