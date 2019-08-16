@@ -14,6 +14,8 @@
 
 package org.janusgraph.hadoop;
 
+import org.apache.commons.configuration.BaseConfiguration;
+import org.apache.hadoop.conf.Configuration;
 import org.janusgraph.diskstorage.configuration.BasicConfiguration;
 import org.janusgraph.diskstorage.configuration.ConfigElement;
 import org.janusgraph.diskstorage.configuration.ModifiableConfiguration;
@@ -24,9 +26,6 @@ import org.janusgraph.graphdb.olap.job.IndexRemoveJob;
 import org.janusgraph.graphdb.olap.job.IndexRepairJob;
 import org.janusgraph.hadoop.config.JanusGraphHadoopConfiguration;
 import org.janusgraph.hadoop.scan.CassandraHadoopScanRunner;
-import org.janusgraph.hadoop.scan.HBaseHadoopScanRunner;
-import org.apache.commons.configuration.BaseConfiguration;
-import org.apache.hadoop.conf.Configuration;
 import org.janusgraph.util.system.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -108,67 +107,6 @@ public class MapReduceIndexJobs {
         return cr.run();
     }
 
-    public static ScanMetrics hbaseRepair(String janusgraphPropertiesPath, String indexName, String relationType)
-            throws InterruptedException, IOException, ClassNotFoundException {
-        Properties p = new Properties();
-        FileInputStream fis = null;
-        try {
-            fis = new FileInputStream(janusgraphPropertiesPath);
-            p.load(fis);
-            return hbaseRepair(p, indexName, relationType);
-        } finally {
-            IOUtils.closeQuietly(fis);
-        }
-    }
-
-    public static ScanMetrics hbaseRepair(Properties janusgraphProperties, String indexName, String relationType)
-            throws InterruptedException, IOException, ClassNotFoundException {
-        return hbaseRepair(janusgraphProperties, indexName, relationType, new Configuration());
-    }
-
-    public static ScanMetrics hbaseRepair(Properties janusgraphProperties, String indexName, String relationType,
-                                          Configuration hadoopBaseConf)
-            throws InterruptedException, IOException, ClassNotFoundException {
-        IndexRepairJob job = new IndexRepairJob();
-        HBaseHadoopScanRunner cr = new HBaseHadoopScanRunner(job);
-        ModifiableConfiguration mc = getIndexJobConf(indexName, relationType);
-        copyPropertiesToInputAndOutputConf(hadoopBaseConf, janusgraphProperties);
-        cr.scanJobConf(mc);
-        cr.scanJobConfRoot(GraphDatabaseConfiguration.class.getName() + "#JOB_NS");
-        cr.baseHadoopConf(hadoopBaseConf);
-        return cr.run();
-    }
-
-    public static ScanMetrics hbaseRemove(String janusgraphPropertiesPath, String indexName, String relationType)
-            throws InterruptedException, IOException, ClassNotFoundException {
-        Properties p = new Properties();
-        FileInputStream fis = null;
-        try {
-            fis = new FileInputStream(janusgraphPropertiesPath);
-            p.load(fis);
-            return hbaseRemove(p, indexName, relationType);
-        } finally {
-            IOUtils.closeQuietly(fis);
-        }
-    }
-
-    public static ScanMetrics hbaseRemove(Properties janusgraphProperties, String indexName, String relationType)
-            throws InterruptedException, IOException, ClassNotFoundException {
-        return hbaseRemove(janusgraphProperties, indexName, relationType, new Configuration());
-    }
-
-    public static ScanMetrics hbaseRemove(Properties janusgraphProperties, String indexName, String relationType,
-                                          Configuration hadoopBaseConf)
-            throws InterruptedException, IOException, ClassNotFoundException {
-        IndexRemoveJob job = new IndexRemoveJob();
-        HBaseHadoopScanRunner cr = new HBaseHadoopScanRunner(job);
-        ModifiableConfiguration mc = getIndexJobConf(indexName, relationType);
-        copyPropertiesToInputAndOutputConf(hadoopBaseConf, janusgraphProperties);
-        cr.scanJobConf(mc);
-        cr.scanJobConfRoot(GraphDatabaseConfiguration.class.getName() + "#JOB_NS");
-        cr.baseHadoopConf(hadoopBaseConf);
-        return cr.run();
-    }
 
     private static ModifiableConfiguration getIndexJobConf(String indexName, String relationType) {
         ModifiableConfiguration mc = new ModifiableConfiguration(GraphDatabaseConfiguration.JOB_NS,

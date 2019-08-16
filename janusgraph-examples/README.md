@@ -46,12 +46,6 @@ additional setup and configuration required.
 mvn exec:java -pl :example-common
 ```
 
-### [BerkeleyJE and Lucene](example-berkeleyje/README.md)
-
-```
-mvn exec:java -pl :example-berkeleyje
-```
-
 ### [Cassandra Thrift and Elasticsearch](example-cassandra/README.md)
 
 ```
@@ -62,12 +56,6 @@ mvn exec:java -pl :example-cassandra
 
 ```
 mvn exec:java -pl :example-cql
-```
-
-### [HBase and SolrCloud](example-hbase/README.md)
-
-```
-mvn exec:java -pl :example-hbase
 ```
 
 ### [HBase and Solr Standalone (HTTP)](example-hbase/README.md#hbase-and-solr-standalone-http)
@@ -96,12 +84,6 @@ be run from the `examples` or the project's directory, but please refer to
 the specific directions for each project as there may be additional steps
 for clean up.
 
-### [BerkeleyJE and Lucene](example-berkeleyje/README.md)
-
-```
-mvn exec:java -pl :example-berkeleyje -Dcmd=drop
-```
-
 ### [Cassandra Thrift and Elasticsearch](example-cassandra/README.md)
 
 ```
@@ -112,16 +94,4 @@ mvn exec:java -pl :example-cassandra -Dcmd=drop
 
 ```
 mvn exec:java -pl :example-cql -Dcmd=drop
-```
-
-### [HBase and SolrCloud](example-hbase/README.md)
-
-```
-mvn exec:java -pl :example-hbase -Dcmd=drop
-```
-
-### [HBase and Solr Standalone (HTTP)](example-hbase/README.md#hbase-and-solr-standalone-http)
-
-```
-mvn exec:java -pl :example-hbase -Dexample.config="\${project.basedir}/conf/jgex-hbase-solr-http.properties" -Dcmd=drop
 ```

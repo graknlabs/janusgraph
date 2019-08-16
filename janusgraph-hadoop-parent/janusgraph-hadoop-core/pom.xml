@@ -49,11 +49,6 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>janusgraph-hbase-core</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
             <artifactId>janusgraph-cassandra</artifactId>
             <version>${project.version}</version>
             <classifier>tests</classifier>
@@ -167,53 +162,6 @@
     </build>
 
     <profiles>
-        <profile>
-            <id>hbase1</id>
-            <dependencies>
-                <dependency>
-                    <groupId>org.apache.hbase</groupId>
-                    <artifactId>hbase-shaded-client</artifactId>
-                    <version>${hbase1.version}</version>
-                    <optional>true</optional>
-                    <scope>provided</scope>
-                </dependency>
-                <!-- Need this for compile-time imports on
-                     org.apache.hadoop.hbase.mapreduce -->
-                <dependency>
-                    <groupId>org.apache.hbase</groupId>
-                    <artifactId>hbase-shaded-server</artifactId>
-                    <version>${hbase1.version}</version>
-                    <optional>true</optional>
-                    <scope>provided</scope>
-                </dependency>
-            </dependencies>
-        </profile>
-        <profile>
-            <id>hbase2</id>
-            <activation>
-                <property>
-                    <name>!hbase.profile</name>
-                </property>
-            </activation>
-            <dependencies>
-                <dependency>
-                    <groupId>org.apache.hbase</groupId>
-                    <artifactId>hbase-shaded-client</artifactId>
-                    <version>${hbase2.version}</version>
-                    <optional>true</optional>
-                    <scope>provided</scope>
-                </dependency>
-                <!-- Need this for compile-time imports on
-                     org.apache.hadoop.hbase.mapreduce -->
-                <dependency>
-                    <groupId>org.apache.hbase</groupId>
-                    <artifactId>hbase-shaded-mapreduce</artifactId>
-                    <version>${hbase2.version}</version>
-                    <optional>true</optional>
-                    <scope>provided</scope>
-                </dependency>
-            </dependencies>
-        </profile>
         <!-- Redeclare gpg-plugin at the bottom to ensure it runs after all the other packaging goals -->
         <profile>
             <id>janusgraph-release</id>
