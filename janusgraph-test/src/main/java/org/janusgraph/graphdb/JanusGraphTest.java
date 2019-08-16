@@ -220,7 +220,7 @@ public abstract class JanusGraphTest extends JanusGraphBaseTest {
     public void testClearStorage() throws Exception {
         tearDown();
         config.set(ConfigElement.getPath(GraphDatabaseConfiguration.DROP_ON_CLEAR), true);
-        final Backend backend = getBackend(config, false);
+        final Backend backend = getBackend(config);
         assertTrue(backend.getStoreManager().exists(), "graph should exist before clearing storage");
         clearGraph(config);
         assertFalse(backend.getStoreManager().exists(), "graph should not exist after clearing storage");

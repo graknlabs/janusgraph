@@ -29,7 +29,6 @@ import org.janusgraph.diskstorage.util.time.TimestampProviders;
 import org.janusgraph.graphdb.JanusGraphBaseTest;
 import org.janusgraph.graphdb.configuration.GraphDatabaseConfiguration;
 import org.janusgraph.hadoop.config.JanusGraphHadoopConfiguration;
-import org.janusgraph.hadoop.formats.cassandra.CassandraInputFormat;
 import org.janusgraph.hadoop.scan.CassandraHadoopScanRunner;
 import org.janusgraph.hadoop.scan.HadoopScanMapper;
 import org.apache.hadoop.io.NullWritable;
@@ -150,7 +149,7 @@ public class CassandraScanJobIT extends JanusGraphBaseTest {
         job.setMapOutputValueClass(NullWritable.class);
         job.setNumReduceTasks(0);
         job.setOutputFormatClass(NullOutputFormat.class);
-        job.setInputFormatClass(CassandraInputFormat.class);
+       // job.setInputFormatClass(CassandraInputFormat.class); this class has been removed, update to use CQL
 
         return job;
     }

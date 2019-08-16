@@ -197,11 +197,11 @@ public abstract class JanusGraphIndexTest extends JanusGraphBaseTest {
         GraphOfTheGodsFactory.load(graph);
         tearDown();
         config.set(ConfigElement.getPath(GraphDatabaseConfiguration.DROP_ON_CLEAR), true);
-        final Backend backend = getBackend(config, false);
+        final Backend backend = getBackend(config);
         assertStorageExists(backend, true);
         clearGraph(config);
         try { backend.close(); } catch (final Exception e) { /* Most backends do not support closing after clearing */}
-        try (final Backend newBackend = getBackend(config, false)) {
+        try (final Backend newBackend = getBackend(config)) {
             assertStorageExists(newBackend, false);
         }
     }
@@ -1773,7 +1773,7 @@ public abstract class JanusGraphIndexTest extends JanusGraphBaseTest {
         // writes and aborting a transaction.
         Backend b = null;
         try {
-            b = graph.getConfiguration().getBackend();
+            b = graph.getBackend();
             if (b.getStoreFeatures().hasTxIsolation()) {
                 log.info("Skipping " + getClass().getSimpleName() + "." + testInfo.getTestMethod().toString());
                 return;

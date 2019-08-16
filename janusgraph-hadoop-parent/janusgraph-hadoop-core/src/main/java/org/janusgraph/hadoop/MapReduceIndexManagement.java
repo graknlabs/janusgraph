@@ -32,7 +32,6 @@ import org.janusgraph.core.schema.SchemaAction;
 import org.janusgraph.diskstorage.Backend;
 import org.janusgraph.diskstorage.BackendException;
 import org.janusgraph.diskstorage.cassandra.astyanax.AstyanaxStoreManager;
-import org.janusgraph.diskstorage.cassandra.embedded.CassandraEmbeddedStoreManager;
 import org.janusgraph.diskstorage.cassandra.thrift.CassandraThriftStoreManager;
 import org.janusgraph.diskstorage.configuration.ConfigElement;
 import org.janusgraph.diskstorage.keycolumnvalue.KeyColumnValueStoreManager;
@@ -71,8 +70,7 @@ public class MapReduceIndexManagement {
             Joiner.on(", ").join(SUPPORTED_ACTIONS);
 
     private static final Set<Class<? extends KeyColumnValueStoreManager>> CASSANDRA_STORE_MANAGER_CLASSES =
-            ImmutableSet.of(CassandraEmbeddedStoreManager.class,
-                    AstyanaxStoreManager.class, CassandraThriftStoreManager.class);
+            ImmutableSet.of(AstyanaxStoreManager.class, CassandraThriftStoreManager.class);
 
     public MapReduceIndexManagement(JanusGraph g) {
         this.graph = (StandardJanusGraph)g;

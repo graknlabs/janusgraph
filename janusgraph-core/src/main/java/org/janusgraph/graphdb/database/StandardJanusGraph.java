@@ -102,6 +102,7 @@ import java.io.IOException;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -163,7 +164,7 @@ public class StandardJanusGraph extends JanusGraphBlueprintsGraph {
         this.name = configuration.getGraphName();
         this.isOpen = true;
         this.txCounter = new AtomicLong(0);
-        this.openTransactions = new ConcurrentHashMap<StandardJanusGraphTx, Boolean>(100, 0.75f).keySet();
+        this.openTransactions = Collections.newSetFromMap(new ConcurrentHashMap<>(100, 0.75f, 1));
 
         // Collaborators:
         this.backend = configuration.getBackend();

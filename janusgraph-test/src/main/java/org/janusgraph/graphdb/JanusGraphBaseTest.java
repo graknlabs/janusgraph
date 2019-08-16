@@ -78,17 +78,14 @@ public abstract class JanusGraphBaseTest {
     }
 
     public static void clearGraph(WriteConfiguration config) throws BackendException {
-        getBackend(config, true).clearStorage();
+        getBackend(config).clearStorage();
     }
 
-    public static Backend getBackend(WriteConfiguration config, boolean initialize) throws BackendException {
-        final ModifiableConfiguration adjustedConfig = new ModifiableConfiguration(GraphDatabaseConfiguration.ROOT_NS,config.copy(), BasicConfiguration.Restriction.NONE);
+    public static Backend getBackend(WriteConfiguration config) throws BackendException {
+        ModifiableConfiguration adjustedConfig = new ModifiableConfiguration(GraphDatabaseConfiguration.ROOT_NS,config.copy(), BasicConfiguration.Restriction.NONE);
         adjustedConfig.set(GraphDatabaseConfiguration.LOCK_LOCAL_MEDIATOR_GROUP, "tmp");
         adjustedConfig.set(GraphDatabaseConfiguration.UNIQUE_INSTANCE_ID, "inst");
-        final Backend backend = new Backend(adjustedConfig);
-        if (initialize) {
-            backend.initialize(adjustedConfig);
-        }
+        Backend backend = new Backend(adjustedConfig);
         return backend;
     }
 

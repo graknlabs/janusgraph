@@ -195,6 +195,7 @@ public class Backend implements LockerProvider, AutoCloseable {
         Preconditions.checkNotNull(lockerCreator);
 
         scanner = new StandardScanner(storeManager);
+        initialize();
     }
 
 
@@ -218,18 +219,17 @@ public class Backend implements LockerProvider, AutoCloseable {
 
 
     /**
-     * Initializes this backend with the given configuration. Must be called before this Backend can be used
+     * Initializes this backend with the given configuration.
      *
-     * @param config
      */
-    public void initialize(Configuration config) {
+    private void initialize() {
         try {
             //EdgeStore & VertexIndexStore
-            KeyColumnValueStore idStore = storeManager.openDatabase(config.get(IDS_STORE_NAME));
+            KeyColumnValueStore idStore = storeManager.openDatabase(configuration.get(IDS_STORE_NAME));
 
             idAuthority = null;
             if (storeFeatures.isKeyConsistent()) {
-                idAuthority = new ConsistentKeyIDAuthority(idStore, storeManager, config);
+                idAuthority = new ConsistentKeyIDAuthority(idStore, storeManager, configuration);
             } else {
                 throw new IllegalStateException("Store needs to support consistent key or transactional operations for ID manager to guarantee proper id allocations");
             }
