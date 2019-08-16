@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.janusgraph</groupId>
@@ -38,24 +39,9 @@
             <artifactId>janusgraph-cassandra</artifactId>
             <version>${project.version}</version>
         </dependency>
-      <dependency>
-        <groupId>org.janusgraph</groupId>
-        <artifactId>janusgraph-cql</artifactId>
-        <version>${project.version}</version>
-      </dependency>
         <dependency>
             <groupId>org.janusgraph</groupId>
-            <artifactId>janusgraph-berkeleyje</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.janusgraph</groupId>
-            <artifactId>janusgraph-hbase</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.janusgraph</groupId>
-            <artifactId>janusgraph-bigtable</artifactId>
+            <artifactId>janusgraph-cql</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -116,7 +102,7 @@
             <artifactId>jackson-jaxrs</artifactId>
             <version>${jackson1.version}</version>
         </dependency>
- 
+
         <!-- Jackson 2.x -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
@@ -172,42 +158,4 @@
             <!-- Done disabling unnecessary plugins -->
         </plugins>
     </build>
-
-    <profiles>
-        <profile>
-            <id>hbase1</id>
-            <dependencies>
-                <dependency>
-                    <groupId>org.apache.hbase</groupId>
-                    <artifactId>hbase-shaded-client</artifactId>
-                    <version>${hbase1.version}</version>
-                </dependency>
-                <dependency>
-                    <groupId>org.apache.hbase</groupId>
-                    <artifactId>hbase-shaded-server</artifactId>
-                    <version>${hbase1.version}</version>
-                </dependency>
-            </dependencies>
-        </profile>
-        <profile>
-            <id>hbase2</id>
-            <activation>
-                <property>
-                    <name>!hbase.profile</name>
-                </property>
-            </activation>
-            <dependencies>
-                <dependency>
-                    <groupId>org.apache.hbase</groupId>
-                    <artifactId>hbase-shaded-client</artifactId>
-                    <version>${hbase2.version}</version>
-                </dependency>
-                <dependency>
-                    <groupId>org.apache.hbase</groupId>
-                    <artifactId>hbase-shaded-mapreduce</artifactId>
-                    <version>${hbase2.version}</version>
-                </dependency>
-            </dependencies>
-        </profile>
-    </profiles>
 </project>
