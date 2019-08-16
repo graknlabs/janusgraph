@@ -31,7 +31,6 @@ import org.janusgraph.core.schema.RelationTypeIndex;
 import org.janusgraph.core.schema.SchemaAction;
 import org.janusgraph.diskstorage.Backend;
 import org.janusgraph.diskstorage.BackendException;
-import org.janusgraph.diskstorage.cassandra.AbstractCassandraStoreManager;
 import org.janusgraph.diskstorage.cassandra.astyanax.AstyanaxStoreManager;
 import org.janusgraph.diskstorage.cassandra.embedded.CassandraEmbeddedStoreManager;
 import org.janusgraph.diskstorage.cassandra.thrift.CassandraThriftStoreManager;
@@ -45,7 +44,6 @@ import org.janusgraph.graphdb.olap.job.IndexRepairJob;
 import org.janusgraph.graphdb.olap.job.IndexUpdateJob;
 import org.janusgraph.hadoop.config.JanusGraphHadoopConfiguration;
 import org.janusgraph.hadoop.config.ModifiableHadoopConfiguration;
-import org.janusgraph.hadoop.formats.cassandra.CassandraBinaryInputFormat;
 import org.janusgraph.hadoop.scan.HadoopScanMapper;
 import org.janusgraph.hadoop.scan.HadoopScanRunner;
 import org.janusgraph.hadoop.scan.HadoopVertexScanMapper;
@@ -145,15 +143,15 @@ public class MapReduceIndexManagement {
         final Class<? extends InputFormat> inputFormat;
         final Class<? extends KeyColumnValueStoreManager> storeManagerClass =
                 graph.getBackend().getStoreManagerClass();
-        if (CASSANDRA_STORE_MANAGER_CLASSES.contains(storeManagerClass)) {
-            inputFormat = CassandraBinaryInputFormat.class;
-            // Set the partitioner
-            IPartitioner part =
-                    ((AbstractCassandraStoreManager)graph.getBackend().getStoreManager()).getCassandraPartitioner();
-            hadoopConf.set("cassandra.input.partitioner.class", part.getClass().getName());
-        } else {
-            throw new IllegalArgumentException("Store manager class " + storeManagerClass + "is not supported");
-        }
+//        if (CASSANDRA_STORE_MANAGER_CLASSES.contains(storeManagerClass)) {
+//            inputFormat = CassandraBinaryInputFormat.class;
+//            // Set the partitioner
+//            IPartitioner part =
+//                    ((AbstractCassandraStoreManager)graph.getBackend().getStoreManager()).getCassandraPartitioner();
+//            hadoopConf.set("cassandra.input.partitioner.class", part.getClass().getName());
+//        } else {
+//            throw new IllegalArgumentException("Store manager class " + storeManagerClass + "is not supported");
+//        }
 
         // The index name and relation type name (if the latter is applicable)
         final String indexName = index.name();
@@ -176,7 +174,8 @@ public class MapReduceIndexManagement {
         String jobName = HadoopScanMapper.class.getSimpleName() + "[" + indexJobClass.getSimpleName() + "]";
 
         try {
-            return new CompletedJobFuture(HadoopScanRunner.runJob(hadoopConf, inputFormat, jobName, mapperClass));
+            // remove null and uncomment code above when fixing this for CQL
+            return new CompletedJobFuture(HadoopScanRunner.runJob(hadoopConf, null, jobName, mapperClass));
         } catch (Exception e) {
             return new FailedJobFuture(e);
         }
