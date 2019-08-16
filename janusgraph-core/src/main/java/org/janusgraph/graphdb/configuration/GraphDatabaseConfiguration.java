@@ -1191,7 +1191,7 @@ public class GraphDatabaseConfiguration {
     private final Configuration configuration;
     private final ReadConfiguration configurationAtOpen;
     private final String uniqueGraphId;
-    private StoreFeatures storeFeatures;
+    private final StoreFeatures storeFeatures;
 
     private boolean readOnly;
     private boolean flushIDs;
