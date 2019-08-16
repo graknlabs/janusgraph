@@ -125,8 +125,8 @@
         <compiler.target>1.8</compiler.target>
         <test.excluded.groups>MEMORY_TESTS,PERFORMANCE_TESTS,BRITTLE_TESTS</test.excluded.groups>
         <dependency.locations.enabled>false</dependency.locations.enabled>
-        <cassandra-driver.version>3.7.2</cassandra-driver.version>
-        <testcontainers.version>1.10.6</testcontainers.version>
+        <cassandra-driver.version>4.1.0</cassandra-driver.version>
+        <testcontainers.version>1.11.4</testcontainers.version>
     </properties>
     <modules>
         <module>janusgraph-codepipelines-ci</module>
