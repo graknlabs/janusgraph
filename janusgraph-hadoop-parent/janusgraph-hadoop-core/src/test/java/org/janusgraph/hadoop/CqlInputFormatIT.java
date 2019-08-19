@@ -16,23 +16,25 @@ package org.janusgraph.hadoop;
 
 import org.apache.tinkerpop.gremlin.structure.Graph;
 import org.apache.tinkerpop.gremlin.structure.util.GraphFactory;
-import org.janusgraph.JanusGraphCassandraContainer;
+import org.janusgraph.diskstorage.cql.CassandraStorageSetup;
 import org.janusgraph.diskstorage.configuration.WriteConfiguration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
+import org.junit.jupiter.api.BeforeAll;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-@Testcontainers
+import static org.janusgraph.graphdb.configuration.GraphDatabaseConfiguration.STORAGE_HOSTS;
+
 public class CqlInputFormatIT extends AbstractInputFormatIT {
 
-    @Container
-    private static JanusGraphCassandraContainer cql = new JanusGraphCassandraContainer(true);
+    @BeforeAll
+    public static void start(){
+        CassandraStorageSetup.startCleanEmbedded();
+    }
 
     private PropertiesConfiguration getGraphConfiguration() throws ConfigurationException, IOException {
         final PropertiesConfiguration config = new PropertiesConfiguration("target/test-classes/cql-read.properties");
@@ -45,7 +47,7 @@ public class CqlInputFormatIT extends AbstractInputFormatIT {
 
     @Override
     public WriteConfiguration getConfiguration() {
-        return cql.getConfiguration("cqlinputformatit").getConfiguration();
+        return CassandraStorageSetup.getCQLConfiguration("cqlinputformatit").set(STORAGE_HOSTS, new String[]{"127.0.0.1"}).getConfiguration();
     }
 
     @Override

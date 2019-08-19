@@ -15,20 +15,20 @@
 package org.janusgraph.blueprints.cql;
 
 import org.apache.tinkerpop.gremlin.GraphProvider;
-import org.janusgraph.JanusGraphCassandraContainer;
 import org.janusgraph.blueprints.AbstractJanusGraphComputerProvider;
 import org.janusgraph.diskstorage.configuration.ModifiableConfiguration;
+import org.janusgraph.diskstorage.cql.CassandraStorageSetup;
 import org.janusgraph.graphdb.olap.computer.FulgoraGraphComputer;
 
 @GraphProvider.Descriptor(computer = FulgoraGraphComputer.class)
 public class CQLGraphComputerProvider extends AbstractJanusGraphComputerProvider {
-    public static final JanusGraphCassandraContainer cqlContainer = new JanusGraphCassandraContainer();
 
     @Override
     public ModifiableConfiguration getJanusGraphConfiguration(String graphName, Class<?> test, String testMethodName) {
-        cqlContainer.start();
+        CassandraStorageSetup.startCleanEmbedded();
         ModifiableConfiguration config = super.getJanusGraphConfiguration(graphName, test, testMethodName);
-        config.setAll(cqlContainer.getConfiguration(graphName).getAll());
+        config.setAll(CassandraStorageSetup.getCQLConfiguration(graphName).getAll());
         return config;
     }
+
 }

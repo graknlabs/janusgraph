@@ -79,10 +79,6 @@ public class CassandraStorageSetup {
         }
     }
 
-    /**
-     *
-     * @return path to cassandra config and data directory
-     */
     private static synchronized Paths getPaths() {
         if (null == paths) {
             final String yamlPath = "file://" + loadAbsoluteDirectoryPath("conf", CONFDIR_SYSPROP, true) + File.separator

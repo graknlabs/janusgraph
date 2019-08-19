@@ -14,19 +14,21 @@
 
 package org.janusgraph.graphdb.cql;
 
-import org.janusgraph.JanusGraphCassandraContainer;
 import org.janusgraph.diskstorage.configuration.WriteConfiguration;
+import org.janusgraph.diskstorage.cql.CassandraStorageSetup;
 import org.janusgraph.graphdb.JanusGraphPartitionGraphTest;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
+import org.junit.jupiter.api.BeforeAll;
 
-@Testcontainers
 public class CQLPartitionGraphTest extends JanusGraphPartitionGraphTest {
-    @Container
-    public static final JanusGraphCassandraContainer cqlContainer = new JanusGraphCassandraContainer();
+
+    @BeforeAll
+    public static void beforeClass() {
+        CassandraStorageSetup.startCleanEmbedded();
+    }
 
     @Override
     public WriteConfiguration getBaseConfiguration() {
-        return cqlContainer.getConfiguration(getClass().getSimpleName()).getConfiguration();
+        return CassandraStorageSetup.getCQLConfiguration(getClass().getSimpleName()).getConfiguration();
     }
+
 }

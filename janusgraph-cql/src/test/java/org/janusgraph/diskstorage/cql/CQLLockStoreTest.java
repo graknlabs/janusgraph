@@ -14,22 +14,23 @@
 
 package org.janusgraph.diskstorage.cql;
 
-import org.janusgraph.JanusGraphCassandraContainer;
+import static org.janusgraph.diskstorage.cql.CassandraStorageSetup.*;
+
 import org.janusgraph.diskstorage.BackendException;
 import org.janusgraph.diskstorage.LockKeyColumnValueStoreTest;
 import org.janusgraph.diskstorage.configuration.Configuration;
 import org.janusgraph.diskstorage.configuration.ModifiableConfiguration;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
+import org.junit.jupiter.api.BeforeAll;
 
-@Testcontainers
 public class CQLLockStoreTest extends LockKeyColumnValueStoreTest {
 
-    @Container
-    public static final JanusGraphCassandraContainer cqlContainer = new JanusGraphCassandraContainer();
+    @BeforeAll
+    public static void startCassandra() {
+        startCleanEmbedded();
+    }
 
-    protected ModifiableConfiguration getBaseStorageConfiguration() {
-        return cqlContainer.getConfiguration(getClass().getSimpleName());
+    private ModifiableConfiguration getBaseStorageConfiguration() {
+        return getCQLConfiguration(getClass().getSimpleName());
     }
 
     private CQLStoreManager openStorageManager(final Configuration c) throws BackendException {

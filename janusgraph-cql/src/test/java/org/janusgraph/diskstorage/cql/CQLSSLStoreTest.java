@@ -16,21 +16,28 @@ package org.janusgraph.diskstorage.cql;
 
 import static org.janusgraph.diskstorage.cql.CassandraStorageSetup.*;
 
+import org.janusgraph.CassandraTestCategory;
 import org.janusgraph.diskstorage.BackendException;
-import org.janusgraph.diskstorage.IDAuthorityTest;
 import org.janusgraph.diskstorage.configuration.Configuration;
 import org.janusgraph.diskstorage.configuration.ModifiableConfiguration;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Tag;
 
-public class CQLIDAuthorityTest extends IDAuthorityTest {
+@Tag(CassandraTestCategory.CASSANDRA_SSL_TESTS)
+public class CQLSSLStoreTest extends CQLStoreTest {
+
+    public CQLSSLStoreTest() throws BackendException {
+    }
 
     @BeforeAll
     public static void startCassandra() {
         startCleanEmbedded();
     }
 
-    private ModifiableConfiguration getBaseStorageConfiguration() {
-        return getCQLConfiguration(getClass().getSimpleName());
+    @Override
+    protected ModifiableConfiguration getBaseStorageConfiguration() {
+        return enableSSL(getCQLConfiguration(getClass().getSimpleName()));
     }
 
     private CQLStoreManager openStorageManager(final Configuration c) throws BackendException {
