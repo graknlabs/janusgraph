@@ -116,6 +116,8 @@ data_file_directories:
 
 # commit log
 commitlog_directory: ${cassandra.dir}/commitlog
+hints_directory: ${cassandra.dir}/data/hints
+cdc_raw_directory: ${cassandra.dir}/data/cdc_raw
 
 # policy for data disk failures:
 # stop_paranoid: shut down gossip and Thrift even for single-sstable errors.
