@@ -1,0 +1,16 @@
+<configuration debug="false">
+
+    <appender name="MAIN" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <root level="INFO"/>
+
+    <logger name="org.janusgraph" level="INFO">
+        <appender-ref ref="${jetty.log.appender:-MAIN}"/>
+    </logger>
+
+
+</configuration>

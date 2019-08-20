@@ -69,11 +69,6 @@
 
         <!-- Test Dependencies -->
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.janusgraph</groupId>
             <artifactId>janusgraph-cassandra</artifactId>
             <version>${project.version}</version>
@@ -213,9 +208,6 @@
                     <parallel>none</parallel>
                     <perCoreThreadCount>false</perCoreThreadCount>
                     <threadCount>1</threadCount>
-                    <systemPropertyVariables>
-                        <log4j.configuration>file:${project.build.testOutputDirectory}/log4j.properties</log4j.configuration>
-                    </systemPropertyVariables>
                     <useSystemClassLoader>false</useSystemClassLoader>
                 </configuration>
                 <executions>

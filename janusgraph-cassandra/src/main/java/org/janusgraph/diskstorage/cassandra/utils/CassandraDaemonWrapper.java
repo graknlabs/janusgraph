@@ -72,10 +72,8 @@ public class CassandraDaemonWrapper {
         System.setProperty("cassandra.config", config);
         // Prevent Cassandra from closing stdout/stderr streams
         System.setProperty("cassandra-foreground", "yes");
-        // Prevent Cassandra from overwriting Log4J configuration
-        System.setProperty("log4j.defaultInitOverride", "false");
 
-        log.info("Starting cassandra with {}", config);
+        log.debug("Starting cassandra with {}", config);
 
         /*
          * This main method doesn't block for any substantial length of time. It

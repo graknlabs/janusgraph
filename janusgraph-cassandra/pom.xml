@@ -61,11 +61,6 @@
              explicitly declared below: to make slf4j-log4j12 preced logback-classic
              on the test classpath. -->
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
         </dependency>
