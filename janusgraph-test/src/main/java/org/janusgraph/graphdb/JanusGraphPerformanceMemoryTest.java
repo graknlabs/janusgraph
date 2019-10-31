@@ -98,7 +98,7 @@ public abstract class JanusGraphPerformanceMemoryTest extends JanusGraphBaseTest
         Thread[] writeThreads = new Thread[4];
         long start = System.currentTimeMillis();
         TestTimeAccumulator.reset();
-        System.out.println("statrting writes");
+        System.out.println("starting writes");
         for (int t = 0; t < writeThreads.length; t++) {
             writeThreads[t] = new Thread(() -> {
                 for (int r = 0; r < rounds; r++) {
@@ -127,7 +127,7 @@ public abstract class JanusGraphPerformanceMemoryTest extends JanusGraphBaseTest
         final int maxUID = uidCounter.get();
         final int trials = 1000;
         final String fixedName = "john";
-        Thread[] readThreads = new Thread[4];
+        Thread[] readThreads = new Thread[Runtime.getRuntime().availableProcessors() * 2];
         start = System.currentTimeMillis();
         TestTimeAccumulator.reset();
         for (int t = 0; t < readThreads.length; t++) {
@@ -144,8 +144,6 @@ public abstract class JanusGraphPerformanceMemoryTest extends JanusGraphBaseTest
                         assertTrue(((JanusGraphEdge) e).<Integer>value("time") >= 0);
                     }
                     assertTrue(count <= 2);
-//                        if (t%(trials/10)==0) System.out.println(t);
-
                 }
                 assertEquals(getVertex(tx, "uid", randomUniqueId).value("name"), fixedName);
                 tx.commit();

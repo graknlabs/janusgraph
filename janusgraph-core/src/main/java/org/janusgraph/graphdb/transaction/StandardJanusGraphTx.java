@@ -277,7 +277,7 @@ public class StandardJanusGraphTx implements JanusGraphTransaction, TypeInspecto
         this.newVertexIndexEntries = (config.isSingleThreaded()) ? new SimpleIndexCache() : new ConcurrentIndexCache();
 
 
-        long effectiveVertexCacheSize = Math.max(MIN_VERTEX_CACHE_SIZE, config.getVertexCacheSize()); // this is because of a weird bug with cache, see line 119
+        long effectiveVertexCacheSize = Math.max(MIN_VERTEX_CACHE_SIZE, config.getVertexCacheSize()); // this is because of a weird bug with cache, see line above where declared MIN_VERTEX_CACHE_SIZE
         this.vertexCache = new VertexCache(effectiveVertexCacheSize, concurrencyLevel, config.getDirtyVertexSize());
         this.indexCache = CacheBuilder.newBuilder().weigher((Weigher<JointIndexQuery.Subquery, List<Object>>) (q, r) -> 2 + r.size()).concurrencyLevel(concurrencyLevel).maximumWeight(config.getIndexCacheWeight()).build();
 
@@ -1210,7 +1210,7 @@ public class StandardJanusGraphTx implements JanusGraphTransaction, TypeInspecto
 
         private PredicateCondition<PropertyKey, JanusGraphElement> getEqualityCondition(Condition<JanusGraphElement> condition) {
             if (condition instanceof PredicateCondition) {
-                final PredicateCondition<PropertyKey, JanusGraphElement> pc = (PredicateCondition) condition;
+                PredicateCondition<PropertyKey, JanusGraphElement> pc = (PredicateCondition) condition;
                 if (pc.getPredicate() == Cmp.EQUAL && TypeUtil.hasSimpleInternalVertexKeyIndex(pc.getKey())) return pc;
             } else if (condition instanceof And) {
                 for (Condition<JanusGraphElement> child : condition.getChildren()) {

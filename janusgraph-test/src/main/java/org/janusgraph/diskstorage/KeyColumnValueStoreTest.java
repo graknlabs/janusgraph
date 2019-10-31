@@ -310,15 +310,10 @@ public abstract class KeyColumnValueStoreTest extends AbstractKCVSTest {
         String[][] values = KeyValueStoreUtil.generateData(keys, columns);
         log.debug("Loading values: " + keys + "x" + columns);
         long time = System.currentTimeMillis();
-        TestTimeAccumulator.reset();
         loadValues(values);
-        long totalTimeInMs = TestTimeAccumulator.getTotalTimeInMs();
-        close();
+        clopen();
         System.out.println("Loading time (ms): " + (System.currentTimeMillis() - time));
-        System.out.println("Time executing mutatemany: "+totalTimeInMs);
-        System.out.println("Invoked times: "+TestTimeAccumulator.getTimes());
         //print(values);
-        open();
         Random r = new Random();
         int trials = 500 * multiplier;
         int delta = 10;

@@ -3,7 +3,7 @@
     <parent>
         <groupId>org.janusgraph</groupId>
         <artifactId>janusgraph</artifactId>
-        <version>0.0.4-grakn-janus</version>
+        <version>0.0.5-grakn-janus</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>janusgraph-lucene</artifactId>

@@ -47,13 +47,12 @@ import java.util.Set;
 
 /**
  * Utility methods used in query optimization and processing.
- *
  */
 public class QueryUtil {
 
     public static int adjustLimitForTxModifications(StandardJanusGraphTx tx, int uncoveredAndConditions, int limit) {
         if (uncoveredAndConditions > 0) {
-            final int maxMultiplier = Integer.MAX_VALUE / limit;
+            int maxMultiplier = Integer.MAX_VALUE / limit;
             limit = limit * Math.min(maxMultiplier, (int) Math.pow(2, uncoveredAndConditions)); //(limit*3)/2+1;
         }
 
@@ -158,27 +157,27 @@ public class QueryUtil {
     public static <E extends JanusGraphElement> And<E> constraints2QNF(StandardJanusGraphTx tx, List<PredicateCondition<String, E>> constraints) {
         And<E> conditions = new And<>(constraints.size() + 4);
         for (PredicateCondition<String, E> atom : constraints) {
-            final RelationType type = getType(tx, atom.getKey());
+            RelationType type = getType(tx, atom.getKey());
+            JanusGraphPredicate predicate = atom.getPredicate();
 
             if (type == null) {
-                if (atom.getPredicate() == Cmp.EQUAL && atom.getValue() == null ||
-                        (atom.getPredicate() == Cmp.NOT_EQUAL && atom.getValue() != null))
+                if (predicate == Cmp.EQUAL && atom.getValue() == null || (predicate == Cmp.NOT_EQUAL && atom.getValue() != null))
                     continue; //Ignore condition, its trivially satisfied
 
                 return null;
             }
 
             Object value = atom.getValue();
-            JanusGraphPredicate predicate = atom.getPredicate();
 
 
-            if (type.isPropertyKey()) {
-                PropertyKey key = (PropertyKey) type;
-                Preconditions.checkArgument(key.dataType() == Object.class || predicate.isValidValueType(key.dataType()), "Data type of key is not compatible with condition");
-            } else { //its a label
-                Preconditions.checkArgument(((EdgeLabel) type).isUnidirected());
-                Preconditions.checkArgument(predicate.isValidValueType(JanusGraphVertex.class), "Data type of key is not compatible with condition");
-            }
+            // TODO: verify if following checkArguments are needed
+//            if (type.isPropertyKey()) {
+//                PropertyKey key = (PropertyKey) type;
+//                Preconditions.checkArgument(key.dataType() == Object.class || predicate.isValidValueType(key.dataType()), "Data type of key is not compatible with condition");
+//            } else { //its a label
+//                Preconditions.checkArgument(((EdgeLabel) type).isUnidirected());
+//                Preconditions.checkArgument(predicate.isValidValueType(JanusGraphVertex.class), "Data type of key is not compatible with condition");
+//            }
 
             if (predicate instanceof Contain) {
                 //Rewrite contains conditions
@@ -195,7 +194,7 @@ public class QueryUtil {
                     if (values.size() == 1) {
                         addConstraint(type, Cmp.EQUAL, values.iterator().next(), conditions, tx);
                     } else {
-                        final Or<E> nested = new Or<>(values.size());
+                        Or<E> nested = new Or<>(values.size());
                         for (Object invalue : values)
                             addConstraint(type, Cmp.EQUAL, invalue, nested, tx);
                         conditions.add(nested);

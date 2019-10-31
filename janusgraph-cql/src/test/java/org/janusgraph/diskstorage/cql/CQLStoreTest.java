@@ -99,8 +99,7 @@ public class CQLStoreTest extends KeyColumnValueStoreTest {
     @Tag(TestCategory.UNORDERED_KEY_STORE_TESTS)
     public void testUnorderedConfiguration(TestInfo testInfo) {
         if (!this.manager.getFeatures().hasUnorderedScan()) {
-            LOGGER.warn(
-                    "Can't test key-unordered features on incompatible store.  "
+            LOGGER.warn("Can't test key-unordered features on incompatible store.  "
                             + "This warning could indicate reduced test coverage and "
                             + "a broken JUnit configuration.  Skipping test {}.",
                     testInfo.getDisplayName());

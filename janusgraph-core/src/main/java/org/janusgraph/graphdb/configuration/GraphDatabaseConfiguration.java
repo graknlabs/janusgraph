@@ -518,7 +518,7 @@ public class GraphDatabaseConfiguration {
             "JanusGraph break requests that may return many results from distributed storage backends " +
                     "into a series of requests for small chunks/pages of results, where each chunk contains " +
                     "up to this many elements.",
-            ConfigOption.Type.MASKABLE, 100);
+            ConfigOption.Type.MASKABLE, 5000);
 
     public static final ConfigOption<Boolean> DROP_ON_CLEAR = new ConfigOption<>(STORAGE_NS, "drop-on-clear",
             "Whether to drop the graph database (true) or delete rows (false) when clearing storage. " +

@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.janusgraph</groupId>
     <artifactId>janusgraph</artifactId>
-    <version>0.0.4-grakn-janus</version>
+    <version>0.0.5-grakn-janus</version>
     <packaging>pom</packaging>
     <prerequisites>
         <maven>2.2.1</maven>

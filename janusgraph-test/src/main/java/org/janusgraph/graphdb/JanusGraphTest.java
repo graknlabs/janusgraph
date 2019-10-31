@@ -155,6 +155,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -204,17 +206,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
-/**
-
- * @author Joshua Shinavier (http://fortytwo.net)
- */
 public abstract class JanusGraphTest extends JanusGraphBaseTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(JanusGraphTest.class);
 
-    boolean isLockingOptimistic() {
-        return features.hasOptimisticLocking();
-    }
 
   /* ==================================================================================
                             INDEXING
@@ -257,7 +252,7 @@ public abstract class JanusGraphTest extends JanusGraphBaseTest {
         vertex1.property(namePropertyKey.name(), "abcd");
         tx.commit();
         clopen();
-
+        JanusGraphVertex vtest = getVertex(tx, "name", "abcd");
         // Verify vertex is persisted after closing and reopening graph
         long nid = vertex1.longId();
         assertNotNull(getV(tx, nid));
@@ -267,7 +262,14 @@ public abstract class JanusGraphTest extends JanusGraphBaseTest {
         JanusGraphVertex v = getV(tx, namePropertyKey.longId());
         assertNotNull(v);
 
-        // For some reason we check that there is no vertex with nid+64, self explanatory!!111!
+        // BIG NOTE:
+        // Janus does validation on ID when we ask to fetch a vertex using `getVertex(ID)`
+        // if the ID is not valid (verified using bitwise operations in idManager), it will immediately return null
+        // Apparently any valid ID + 64 yields another valid ID. that's why here we use previous nid (which we know it's valid) and add 64
+        // This assertion is actually verifying that we don't end up building a Vertex that does not exist, expected flow is:
+        // - we pass an ID, the ID gets validated using bitwise magic, if it's valid then we proceed to building the actual vertex
+        // - when building the vertex we run a query to verify that there is actually a vertex in the Store(Cassandra keyspace) and it has the `vertexExists` property set to true
+        // We can potentially disable the check on the existence of the vertexExists property, and that's what happens when enabling batch-loading
         assertMissing(tx, nid + 64);
 
         // Re-fetch everything because YES

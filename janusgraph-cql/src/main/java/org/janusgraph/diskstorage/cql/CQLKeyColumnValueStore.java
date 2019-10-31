@@ -23,6 +23,7 @@ import com.datastax.oss.driver.api.core.cql.Row;
 import com.datastax.oss.driver.api.core.metadata.TokenMap;
 import com.datastax.oss.driver.api.core.servererrors.QueryValidationException;
 import com.datastax.oss.driver.api.core.type.DataTypes;
+import com.datastax.oss.driver.api.querybuilder.SchemaBuilder;
 import com.datastax.oss.driver.api.querybuilder.relation.Relation;
 import com.datastax.oss.driver.api.querybuilder.schema.CreateTableWithOptions;
 import com.datastax.oss.driver.api.querybuilder.schema.compaction.CompactionStrategy;
@@ -71,6 +72,8 @@ import static io.vavr.API.$;
 import static io.vavr.API.Case;
 import static io.vavr.API.Match;
 import static io.vavr.Predicates.instanceOf;
+import static org.janusgraph.diskstorage.Backend.EDGESTORE_NAME;
+import static org.janusgraph.diskstorage.Backend.INDEXSTORE_NAME;
 import static org.janusgraph.diskstorage.cql.CQLConfigOptions.CF_COMPRESSION;
 import static org.janusgraph.diskstorage.cql.CQLConfigOptions.CF_COMPRESSION_BLOCK_SIZE;
 import static org.janusgraph.diskstorage.cql.CQLConfigOptions.CF_COMPRESSION_TYPE;
@@ -146,7 +149,7 @@ public class CQLKeyColumnValueStore implements KeyColumnValueStore {
         this.pageSize = configuration.get(PAGE_SIZE);
 
 
-        if (shouldInitializeTable()) {
+        if (shouldInitialiseTable()) {
             initialiseTable(this.storeManager.getKeyspaceName(), tableName, configuration);
         }
 
@@ -209,12 +212,12 @@ public class CQLKeyColumnValueStore implements KeyColumnValueStore {
     }
 
     /**
-     * Check if the current table should be initialized.
+     * Check if the current table should be initialised.
      * NOTE: This additional check is needed when Cassandra security is enabled, for more info check issue #1103
      *
      * @return true if table already exists in current keyspace, false otherwise
      */
-    private boolean shouldInitializeTable() {
+    private boolean shouldInitialiseTable() {
         return this.session.getMetadata()
                 .getKeyspace(storeManager.getKeyspaceName()).map(k -> !k.getTable(this.tableName).isPresent())
                 .orElse(true);
@@ -225,8 +228,16 @@ public class CQLKeyColumnValueStore implements KeyColumnValueStore {
                 .ifNotExists()
                 .withPartitionKey(KEY_COLUMN_NAME, DataTypes.BLOB)
                 .withClusteringColumn(COLUMN_COLUMN_NAME, DataTypes.BLOB)
-                .withColumn(VALUE_COLUMN_NAME, DataTypes.BLOB);
+                .withColumn(VALUE_COLUMN_NAME, DataTypes.BLOB)
+                .withSpeculativeRetry("NONE");
 
+
+        if (tableName.startsWith(EDGESTORE_NAME)) {
+            createTable = createTable.withCaching(true, SchemaBuilder.RowsPerPartition.NONE);
+        }
+        if (tableName.startsWith(INDEXSTORE_NAME)) {
+            createTable = createTable.withCaching(false, SchemaBuilder.RowsPerPartition.rows(100));
+        }
 
         createTable = compactionOptions(createTable, configuration);
 

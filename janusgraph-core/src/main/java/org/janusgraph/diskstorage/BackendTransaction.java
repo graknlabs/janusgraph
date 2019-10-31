@@ -76,12 +76,10 @@ public class BackendTransaction implements LoggableTransaction {
 
     private final Map<String, IndexTransaction> indexTx;
 
-    private boolean acquiredLock = false;
     private boolean cacheEnabled = true;
 
-    public BackendTransaction(CacheTransaction storeTx, BaseTransactionConfig txConfig,
-                              StoreFeatures features, KCVSCache edgeStore, KCVSCache indexStore,
-                              KCVSCache txLogStore, Duration maxReadTime,
+    public BackendTransaction(CacheTransaction storeTx, BaseTransactionConfig txConfig, StoreFeatures features,
+                              KCVSCache edgeStore, KCVSCache indexStore, KCVSCache txLogStore, Duration maxReadTime,
                               Map<String, IndexTransaction> indexTx, Executor threadPool) {
         this.storeTx = storeTx;
         this.txConfig = txConfig;
@@ -198,54 +196,6 @@ public class BackendTransaction implements LoggableTransaction {
         indexStore.mutateEntries(key, additions, deletions, storeTx);
     }
 
-    /**
-     * Acquires a lock for the key-column pair on the edge store which ensures that nobody else can take a lock on that
-     * respective entry for the duration of this lock (but somebody could potentially still overwrite
-     * the key-value entry without taking a lock).
-     * The expectedValue defines the value expected to match the value at the time the lock is acquired (or null if it is expected
-     * that the key-column pair does not exist).
-     * <p>
-     * If this method is called multiple times with the same key-column pair in the same transaction, all but the first invocation are ignored.
-     * <p>
-     * The lock has to be released when the transaction closes (commits or aborts).
-     *
-     * @param key    Key on which to lock
-     * @param column Column the column on which to lock
-     */
-    public void acquireEdgeLock(StaticBuffer key, StaticBuffer column) throws BackendException {
-        acquiredLock = true;
-        edgeStore.acquireLock(key, column, null, storeTx);
-    }
-
-    public void acquireEdgeLock(StaticBuffer key, Entry entry) throws BackendException {
-        acquiredLock = true;
-        edgeStore.acquireLock(key, entry.getColumnAs(StaticBuffer.STATIC_FACTORY), entry.getValueAs(StaticBuffer.STATIC_FACTORY), storeTx);
-    }
-
-    /**
-     * Acquires a lock for the key-column pair on the property index which ensures that nobody else can take a lock on that
-     * respective entry for the duration of this lock (but somebody could potentially still overwrite
-     * the key-value entry without taking a lock).
-     * The expectedValue defines the value expected to match the value at the time the lock is acquired (or null if it is expected
-     * that the key-column pair does not exist).
-     * <p>
-     * If this method is called multiple times with the same key-column pair in the same transaction, all but the first invocation are ignored.
-     * <p>
-     * The lock has to be released when the transaction closes (commits or aborts).
-     *
-     * @param key    Key on which to lock
-     * @param column Column the column on which to lock
-     */
-    public void acquireIndexLock(StaticBuffer key, StaticBuffer column) throws BackendException {
-        acquiredLock = true;
-        indexStore.acquireLock(key, column, null, storeTx);
-    }
-
-    public void acquireIndexLock(StaticBuffer key, Entry entry) throws BackendException {
-        acquiredLock = true;
-        indexStore.acquireLock(key, entry.getColumnAs(StaticBuffer.STATIC_FACTORY), entry.getValueAs(StaticBuffer.STATIC_FACTORY), storeTx);
-    }
-
     /* ###################################################
             Convenience Read Methods
      */
@@ -307,7 +257,6 @@ public class BackendTransaction implements LoggableTransaction {
     }
 
     private class SliceQueryRunner implements Runnable {
-
         final KeySliceQuery kq;
         final CountDownLatch doneSignal;
         final AtomicInteger failureCount;
